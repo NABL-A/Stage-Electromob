@@ -10,10 +10,17 @@ while True:
         response = requests.get(URL, timeout=5)
         if response.status_code == 200:
             data = response.json()
-            if data['pin1'] == 1 :
-                print("Présence d'une tuile sur le convoyeur")
-            if data['pin2'] == 0 :
-                print("Présence d'une tuile sur le socle")
+            out = []
+            for i in range(2):
+                out.append(data[f'pin{i+1}'])
+
+            #print(out)
+            
+            if out[0] :
+                print("Tuile sur convoyeur !")
+            if out[1] :
+                print("Tuile en attente d'injection")
+                
         else:
             print(f"Erreur HTTP {response.status_code}")
     except requests.exceptions.RequestException as e:
