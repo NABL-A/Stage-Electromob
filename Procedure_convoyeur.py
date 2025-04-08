@@ -11,9 +11,9 @@ while True:
         if response.status_code == 200:
             data = response.json()
             if data['pin1'] == 1 :
-                print(f"Valeur GPIO 21 : {data['pin1']}")
-            if data['pin2'] == 1 :
-                print(f"Valeur GPIO 23 : {data['pin2']}")
+                print("Présence d'une tuile sur le convoyeur")
+            if data['pin2'] == 0 :
+                print("Présence d'une tuile sur le socle")
         else:
             print(f"Erreur HTTP {response.status_code}")
     except requests.exceptions.RequestException as e:
