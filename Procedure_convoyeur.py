@@ -18,9 +18,9 @@ while True:
             
             if out[0] :
                 print("Tuile sur convoyeur !")
-            if out[1] :
+            if not out[1] :
                 print("Tuile en attente d'injection")
-                
+
         else:
             print(f"Erreur HTTP {response.status_code}")
     except requests.exceptions.RequestException as e:
