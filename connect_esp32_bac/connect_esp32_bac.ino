@@ -11,10 +11,13 @@ String readInputs() {
   int pin2Value = digitalRead(4);
   int pin3Value = digitalRead(21);
   int pin4Value = digitalRead(22);
+  int pin5Value = digitalRead(23);
+
   return "{\"pin1\": " + String(pin1Value) + 
   ", \"pin2\": " + String(pin2Value) + 
   ", \"pin3\": " + String(pin3Value) + 
-  ", \"pin4\": " + String(pin4Value) + "}";
+  ", \"pin4\": " + String(pin4Value) + 
+  ", \"pin5\": " + String(pin5Value) + "}";
 
 }
 
@@ -24,6 +27,7 @@ void setup() {
   pinMode(4, INPUT);
   pinMode(21, INPUT);
   pinMode(22, INPUT);
+  pinMode(23, INPUT);
 
   Serial.println("Réinitialisation du WiFi...");
   WiFi.disconnect(true);
