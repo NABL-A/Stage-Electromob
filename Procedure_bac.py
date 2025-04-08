@@ -1,7 +1,7 @@
 import requests
 import time
 
-ESP32_IP = "http://172.20.10.12" 
+ESP32_IP = "http://172.20.10.13" 
 
 URL = f"{ESP32_IP}/read"
 
