@@ -64,3 +64,10 @@ while True:
     
     time.sleep(0.05)  
 ```
+
+Il suffit donc d'appliquer cette méthode à la fois pour les capteurs situés dans le bac et sur le
+convoyeur pour accéder à toutes les valeurs des capteurs. 
+
+Il m'a fallu par ailleurs changer les câbles d'alimentation du capteur car trop court pour pouvoir 
+placer le capteur à l'endroit souhaité. J'ai donc utilisé un fer à souder et une pince à sertir pour
+retirer les anciens câbles du connecteur et en placer de nouveaux.
