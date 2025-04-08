@@ -8,12 +8,16 @@ WebServer server(80);
 
 String readInputs() {
   int pin1Value = digitalRead(21);
-  return "{\"pin1\": " + String(pin1Value) + "}";
+  int pin2Value = digitalRead(23);
+  return "{\"pin1\": " + String(pin1Value) + 
+  ", \"pin2\": " + String(pin2Value) + "}";
+
 }
 
 void setup() {
   Serial.begin(115200);
   pinMode(21, INPUT); 
+  pinMode(23, INPUT);
 
   Serial.println("Réinitialisation du WiFi...");
   WiFi.disconnect(true);

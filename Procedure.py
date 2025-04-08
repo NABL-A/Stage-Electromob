@@ -10,7 +10,10 @@ while True:
         response = requests.get(URL, timeout=5)
         if response.status_code == 200:
             data = response.json()
-            print(f"Valeur GPIO 21 : {data['pin1']}")
+            if data['pin1'] == 1 :
+                print(f"Valeur GPIO 21 : {data['pin1']}")
+            if data['pin2'] == 1 :
+                print(f"Valeur GPIO 23 : {data['pin2']}")
         else:
             print(f"Erreur HTTP {response.status_code}")
     except requests.exceptions.RequestException as e:
