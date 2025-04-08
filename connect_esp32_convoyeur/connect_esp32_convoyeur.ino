@@ -8,7 +8,7 @@ WebServer server(80);
 
 String readInputs() {
   int pin1Value = digitalRead(21);
-  int pin2Value = digitalRead(23);
+  int pin2Value = 1 - digitalRead(23);
   return "{\"pin1\": " + String(pin1Value) + 
   ", \"pin2\": " + String(pin2Value) + "}";
 

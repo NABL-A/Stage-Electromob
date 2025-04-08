@@ -14,12 +14,7 @@ while True:
             for i in range(2):
                 out.append(data[f'pin{i+1}'])
 
-            #print(out)
-            
-            if out[0] :
-                print("Tuile sur convoyeur !")
-            if not out[1] :
-                print("Tuile en attente d'injection")
+            print(out)
 
         else:
             print(f"Erreur HTTP {response.status_code}")
