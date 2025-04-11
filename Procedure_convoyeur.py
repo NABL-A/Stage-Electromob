@@ -1,24 +1,29 @@
-import requests
-import time
+import json
+import paho.mqtt.client as mqtt
 
-ESP32_IP = "http://172.20.10.12" 
+MQTT_BROKER = "10.2.30.162"
+MQTT_PORT = 1883
 
-URL = f"{ESP32_IP}/read"
+TOPIC = "capteurs_convoyeur/etat"
 
-while True:
+def on_connect(client, userdata, flags, rc):
+    print("Connecté au broker MQTT avec le code de retour", rc)
+    client.subscribe(TOPIC)
+
+def on_message(client, userdata, msg):
     try:
-        response = requests.get(URL, timeout=5)
-        if response.status_code == 200:
-            data = response.json()
-            out = []
-            for i in range(2):
-                out.append(data[f'pin{i+1}'])
+        data = json.loads(msg.payload.decode('utf-8'))
+        out = []
+        for i in range(2):
+            out.append(data[f"pin{i+1}"])
+        print(out)
+    except Exception as e:
+        print("Erreur lors du traitement du message :", e)
 
-            print(out)
+client = mqtt.Client("PythonClient")
+client.on_connect = on_connect
+client.on_message = on_message
 
-        else:
-            print(f"Erreur HTTP {response.status_code}")
-    except requests.exceptions.RequestException as e:
-        print(f"Erreur de connexion : {e}")
-    
-    time.sleep(0.05)  
+client.connect(MQTT_BROKER, MQTT_PORT, 60)
+
+client.loop_forever()

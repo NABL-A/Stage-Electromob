@@ -1,39 +1,59 @@
-import requests
+import json
+import paho.mqtt.client as mqtt
+import numpy as np 
+import rtde_receive
+import rtde_control
+import dashboard_client
+import cv2 as cv
+import math
 import time
+import socket
 
-ESP32_CONVOYEUR_IP = "http://172.20.10.12"
-ESP32_BAC_IP = "http://172.20.10.13"
 
-URL_CONVOYEUR = f"{ESP32_CONVOYEUR_IP}/read"
-URL_BAC = f"{ESP32_BAC_IP}/read"
+##########################################
+# CONNNEXION AU RESEAU ET AU BROKET MQTT
+##########################################
 
-while True:
-    out_convoyeur = []
-    out_bac = []
-    
+MQTT_BROKER = "10.2.30.162"
+MQTT_PORT = 1883
+
+TOPIC_B = "capteurs_bac/etat"
+TOPIC_C = "capteurs_convoyeur/etat"
+
+# Variables globales pour stocker les données des deux topics
+convoyeur_data = [None] * 2  # Liste pour capteurs_convoyeur (pin1 à pin2)
+bac_data = [None] * 5        # Liste pour capteurs_bac (pin1 à pin5)
+
+def on_connect(client, userdata, flags, rc):
+    print("Connecté au broker MQTT avec le code de retour", rc)
+    client.subscribe(TOPIC_B)
+    client.subscribe(TOPIC_C)
+
+def on_message(client, userdata, msg):
+    global convoyeur_data, bac_data
     try:
-        response_convoyeur = requests.get(URL_CONVOYEUR, timeout=5)
-        if response_convoyeur.status_code == 200:
-            data_convoyeur = response_convoyeur.json()
-            for i in range(2):
-                out_convoyeur.append(data_convoyeur.get(f'pin{i+1}', None))
-        else:
-            print(f"Erreur de réponse pour le convoyeur : {response_convoyeur.status_code}")
-    except requests.exceptions.RequestException as e:
-        print(f"Erreur de connexion pour le convoyeur : {e}")
-    
-    try:
-        response_bac = requests.get(URL_BAC, timeout=5)
-        if response_bac.status_code == 200:
-            data_bac = response_bac.json()
-            for i in range(5):
-                out_bac.append(data_bac.get(f'pin{i+1}', None))
-        else:
-            print(f"Erreur de réponse pour le bac : {response_bac.status_code}")
-    except requests.exceptions.RequestException as e:
-        print(f"Erreur de connexion pour le bac : {e}")
-    
-    totalout = [out_convoyeur, out_bac]
-    print(totalout)
-    
-    time.sleep(0.5)
+        # Décoder le message JSON
+        data = json.loads(msg.payload.decode('utf-8'))
+        
+        # Mettre à jour les données selon le topic
+        if msg.topic == TOPIC_C:  # capteurs_convoyeur/etat (2 pins)
+            convoyeur_data = [data["pin1"], data["pin2"]]
+        elif msg.topic == TOPIC_B:  # capteurs_bac/etat (5 pins)
+            bac_data = [data[f"pin{i+1}"] for i in range(5)]
+        
+        # Afficher la liste combinée sous la forme demandée
+        out = [convoyeur_data, bac_data]
+        print(out)
+        
+    except Exception as e:
+        print("Erreur lors du traitement du message :", e)
+
+# Initialisation du client avec la version de l'API de rappel
+client = mqtt.Client("PythonClient")
+client.on_connect = on_connect
+client.on_message = on_message
+
+client.connect(MQTT_BROKER, MQTT_PORT, 60)
+
+client.loop_forever()
+
